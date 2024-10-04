@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  name: Windows Self-hosted Pool
+  name: default
 
 steps:
 - task: Maven@3
