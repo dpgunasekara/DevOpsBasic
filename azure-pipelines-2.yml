@@ -1,0 +1,36 @@
+# azure-pipelines.yml
+trigger:
+- main  # Adjust this to the branch you want to trigger the pipeline
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  imageName: 'dpgunasekara/devopsbasic'  # Update with your Docker Hub username and image name
+  dockerRegistryServiceConnection: 'docker'  # Name of the Docker Hub service connection
+
+steps:
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'  # Path to your pom.xml
+    goals: 'package'          # Goals to run (e.g., package, clean install)
+    options: '-DskipTests'    # Options to pass (skip tests for faster builds)
+    publishJUnitResults: true
+    testResultsFiles: '**/target/surefire-reports/*.xml'
+    codeCoverageToolOption: 'None'
+
+- task: Docker@2
+  inputs:
+    containerRegistry: $(dockerRegistryServiceConnection)  # Reference to the Docker service connection
+    repository: $(imageName)
+    command: 'buildAndPush'
+    Dockerfile: '**/AzureDockerfile'  # Path to your Dockerfile
+    buildContext: '.'
+    tags: 'latest'
+
+- task: Docker@2
+  inputs:
+    containerRegistry: $(dockerRegistryServiceConnection)
+    repository: $(imageName)
+    command: 'push'
+    tags: 'latest'
