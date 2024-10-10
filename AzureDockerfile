@@ -1,4 +1,3 @@
 FROM tomcat:latest
-COPY ./webapp/target/webapp.war /usr/local/tomcat/webapps/
-# Ensure the webapps.dist directory exists before trying to copy from it
-RUN if [ -d /usr/local/tomcat/webapps.dist ]; then cp -r /usr/local/tomcat/webapps.dist/* /usr/local/tomcat/webapps/; fi
+COPY ./webapp/target/webapp.war /usr/local/tomcat/webapps
+RUN cp -r /usr/local/tomcat/webapps.dist/* /usr/local/tomcat/webapps
